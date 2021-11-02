@@ -1,9 +1,13 @@
+from app import db
+
+
 class Manager:
     def __init__(self):
         self.actions = {}
         self.saldo = 0
         self.logs = []
         self.store = {}
+        self.Integer = None
 
     def assign(self, name):
         def decorate(cb):
@@ -16,6 +20,12 @@ class Manager:
             print("Action not defined")
         else:
             self.actions[name](params)
+
+    def Column(self, param, unique, nullable):
+        pass
+
+    def String(self, param):
+        pass
 
     def read_file(self, filepath='baza_danych.txt'):
         file = open(filepath, 'r', encoding='utf8')
@@ -53,8 +63,16 @@ class Manager:
             for log in self.logs:
                 file.write(log + '\n')
 
+    def write_store(self):
+        db.create_all()
+
+
+
+
+
 
 manager = Manager()
+db = Store()
 
 
 @manager.assign("saldo")

@@ -1,10 +1,9 @@
 from flask import Flask, render_template, request
 from accountant import manager
-from flask_sqlalchemy import SQLAlchemy
+from base import init_db
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-db = SQLAlchemy(app)
+Store, Logs, Saldo = init_db(app)
 
 
 
@@ -50,6 +49,7 @@ def history(index_start=None, index_stop=None):
 
 def manager_execute(mode, params):
     manager.execute(mode, params)
+    # manager.write_store()
     manager.logs_write_file()
     manager.write_file()
 
