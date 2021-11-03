@@ -1,6 +1,3 @@
-from app import db
-
-
 class Manager:
     def __init__(self):
         self.actions = {}
@@ -63,16 +60,8 @@ class Manager:
             for log in self.logs:
                 file.write(log + '\n')
 
-    def write_store(self):
-        db.create_all()
-
-
-
-
-
 
 manager = Manager()
-db = Store()
 
 
 @manager.assign("saldo")

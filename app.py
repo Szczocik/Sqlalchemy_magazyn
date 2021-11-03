@@ -49,11 +49,12 @@ def history(index_start=None, index_stop=None):
 
 def manager_execute(mode, params):
     manager.execute(mode, params)
-    # manager.write_store()
-    manager.logs_write_file()
-    manager.write_file()
+    init_db(app)
+    
 
 
 if __name__ == '__main__':
     manager.read_file()
     app.run()
+
+
