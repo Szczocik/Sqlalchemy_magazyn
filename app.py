@@ -3,7 +3,7 @@ from accountant import manager
 from base import init_db
 
 app = Flask(__name__)
-Store, Logs, Saldo = init_db(app)
+init_db(app)
 
 
 
@@ -49,8 +49,7 @@ def history(index_start=None, index_stop=None):
 
 def manager_execute(mode, params):
     manager.execute(mode, params)
-    init_db(app)
-    
+
 
 
 if __name__ == '__main__':
