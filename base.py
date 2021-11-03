@@ -9,24 +9,16 @@ def init_db(app):
         id = db.Column(db.Integer, unique=True, nullable=False, primary_key=True)
         product_name = db.Column(db.String(80), unique=True, nullable=False)
         product_count = db.Column(db.Float, unique=True, nullable=False)
-        # db.create_all()
-        # db.session.add(app)
-        # db.session.commit()
 
 
     class Logs(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         log = db.Column(db.String(120), nullable=False)
-        # db.create_all()
-        # db.session.add(app)
-        # db.session.commit()
+
 
     class Saldo(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         saldo = db.Column(db.Integer, nullable=False)
-
-        # db.session.add(app)
-        # db.session.commit()
 
     db.create_all()
     return Store, Logs, Saldo

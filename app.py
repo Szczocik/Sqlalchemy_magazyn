@@ -51,7 +51,6 @@ def manager_execute(mode, params):
     manager.execute(mode, params)
 
 
-
 if __name__ == '__main__':
     manager.read_file()
     app.run()
