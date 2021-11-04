@@ -18,12 +18,6 @@ class Manager:
         else:
             self.actions[name](params)
 
-    def Column(self, param, unique, nullable):
-        pass
-
-    def String(self, param):
-        pass
-
     def read_file(self, filepath='baza_danych.txt'):
         file = open(filepath, 'r', encoding='utf8')
         for line in file.readlines():

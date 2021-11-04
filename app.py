@@ -51,6 +51,8 @@ def history(index_start=None, index_stop=None):
 
 def manager_execute(mode, params):
     manager.execute(mode, params)
+    # db.session.add(mode, params)
+    # db.session.commit()
 
 
 if __name__ == '__main__':
