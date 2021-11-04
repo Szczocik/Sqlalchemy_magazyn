@@ -20,5 +20,20 @@ def init_db(app):
         id = db.Column(db.Integer, primary_key=True)
         saldo = db.Column(db.Integer, nullable=False)
 
+        @classmethod
+        def change_saldo(cls, change, log_line):
+            saldo = db.session.query(Saldo).first()
+            if not saldo:
+                saldo = Saldo(saldo=0)
+            if saldo.saldo + change < 0:
+                return False
+            saldo.saldo += change
+            db.session.add(saldo)
+            logs = Logs(log=log_line)
+            db.session.add(logs)
+            db.session.commit()
+            return True
+
+
     db.create_all()
     return Store, Logs, Saldo

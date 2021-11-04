@@ -16,6 +16,7 @@ def main():
     if mode == 'saldo':
         params.append(int(request.form.get('amount')))
         manager_execute(mode, params)
+        Saldo.change_saldo()
     elif mode == 'zakup':
         params.append(request.form.get('name'))
         params.append(int(request.form.get('count')))
@@ -51,8 +52,6 @@ def history(index_start=None, index_stop=None):
 
 def manager_execute(mode, params):
     manager.execute(mode, params)
-    # db.session.add(mode, params)
-    # db.session.commit()
 
 
 if __name__ == '__main__':
