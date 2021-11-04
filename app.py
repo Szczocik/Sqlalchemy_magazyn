@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request
+from flask_sqlalchemy import SQLAlchemy
+
 from accountant import manager
 from base import init_db
 
 app = Flask(__name__)
-init_db(app)
-
+Store, Logs, Saldo = init_db(app)
+db = SQLAlchemy(app)
 
 
 @app.route("/", methods=["GET", "POST"])
