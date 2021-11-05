@@ -5,10 +5,11 @@ def init_db(app):
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///baza_danych.db'
     db = SQLAlchemy(app)
 
+
     class Store(db.Model):
         id = db.Column(db.Integer, unique=True, nullable=False, primary_key=True)
         product_name = db.Column(db.String(80), unique=True, nullable=False)
-        product_count = db.Column(db.Float, unique=True, nullable=False)
+        product_count = db.Column(db.Float, nullable=False)
 
         @classmethod
         def change_purchese(cls, change, product_name, log_line):

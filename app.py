@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_alembic import Alembic
 
 from accountant import manager
 from base import init_db
@@ -7,6 +8,8 @@ from base import init_db
 app = Flask(__name__)
 Store, Logs, Saldo = init_db(app)
 db = SQLAlchemy(app)
+alembic = Alembic()
+alembic.init_app(app)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -20,6 +23,9 @@ def main():
         manager_execute(mode, params)
         Saldo.change_saldo(change, log_line)
     elif mode == 'zakup':
+        store = Store(product_name=request.form.get('name'), product_count=request.form.get('count'))
+        db.session.add(store)
+        db.session.commit()
         params.append(request.form.get('name'))
         params.append(int(request.form.get('count')))
         params.append(int(request.form.get('amount')))
@@ -29,8 +35,12 @@ def main():
         params.append(int(request.form.get('count')))
         params.append(int(request.form.get('amount')))
         manager_execute(mode, params)
-
-    return render_template("index.html", saldo=manager.saldo, store=manager.store)
+    print(manager.store)
+    products = {}
+    db_products = db.session.query(Store).all()
+    for db_product in db_products:
+        products[db_product.product_name] = {'count': db_product.product_count, 'price': 0}
+    return render_template("index.html", saldo=manager.saldo, store=products)
 
 
 @app.route("/history/<index_start>/<index_stop>", methods=["GET", "POST"])
