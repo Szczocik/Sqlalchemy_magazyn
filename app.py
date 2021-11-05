@@ -13,10 +13,12 @@ db = SQLAlchemy(app)
 def main():
     mode = request.form.get('mode')
     params = []
+    change = 0
+    log_line = ''
     if mode == 'saldo':
         params.append(int(request.form.get('amount')))
         manager_execute(mode, params)
-        Saldo.change_saldo()
+        Saldo.change_saldo(change, log_line)
     elif mode == 'zakup':
         params.append(request.form.get('name'))
         params.append(int(request.form.get('count')))
