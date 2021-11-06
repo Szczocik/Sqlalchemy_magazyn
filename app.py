@@ -35,7 +35,6 @@ def main():
         params.append(int(request.form.get('count')))
         params.append(int(request.form.get('amount')))
         manager_execute(mode, params)
-    print(manager.store)
     products = {}
     db_products = db.session.query(Store).all()
     for db_product in db_products:
