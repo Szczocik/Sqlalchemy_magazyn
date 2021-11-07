@@ -8,8 +8,8 @@ from base import init_db
 app = Flask(__name__)
 Store, Logs, Saldo = init_db(app)
 db = SQLAlchemy(app)
-alembic = Alembic()
-alembic.init_app(app)
+# alembic = Alembic()
+# alembic.init_app(app)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -18,9 +18,10 @@ def main():
     params = []
 
     if mode == 'saldo':
+
         params.append(int(request.form.get('amount')))
         manager_execute(mode, params)
-        Saldo.change_saldo(change=request.form.get('amount'), log_line='')
+        # Saldo.change_saldo(change=request.form.get('amount'), log_line='')
     elif mode == 'zakup':
         store = Store(product_name=request.form.get('name'), product_count=request.form.get('count'))
         db.session.add(store)
