@@ -16,12 +16,11 @@ alembic.init_app(app)
 def main():
     mode = request.form.get('mode')
     params = []
-    change = 0
-    log_line = ''
+
     if mode == 'saldo':
         params.append(int(request.form.get('amount')))
         manager_execute(mode, params)
-        Saldo.change_saldo(change, log_line)
+        Saldo.change_saldo(change=request.form.get('amount'), log_line='')
     elif mode == 'zakup':
         store = Store(product_name=request.form.get('name'), product_count=request.form.get('count'))
         db.session.add(store)
