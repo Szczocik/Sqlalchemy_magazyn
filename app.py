@@ -45,7 +45,8 @@ def main():
 @app.route("/history/<index_start>/<index_stop>", methods=["GET", "POST"])
 @app.route("/history")
 def history(index_start=None, index_stop=None):
-    manager.logs_read_file()
+    logs = db.session.query(Logs).all()
+    # manager.logs_read_file()
     if not index_start:
         index_start = 0
     if not index_stop:
