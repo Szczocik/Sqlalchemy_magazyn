@@ -16,12 +16,10 @@ db = SQLAlchemy(app)
 def main():
     mode = request.form.get('mode')
     params = []
-
     if mode == 'saldo':
         params.append(int(request.form.get('amount')))
         manager_execute(mode, params)
-        Saldo.change_saldo(amount=request.form.get('amount'), log_line='')
-
+        Saldo.change_saldo(amount=request.form.get('amount'))
     elif mode == 'zakup':
         store = Store(product_name=request.form.get('name'), product_count=request.form.get('count'))
         db.session.add(store)
@@ -35,11 +33,14 @@ def main():
         params.append(int(request.form.get('count')))
         params.append(int(request.form.get('amount')))
         manager_execute(mode, params)
+
+    db_saldo = db.session.query(Saldo).first()
+
     products = {}
     db_products = db.session.query(Store).all()
     for db_product in db_products:
         products[db_product.product_name] = {'count': db_product.product_count, 'price': 0}
-    return render_template("index.html", saldo=manager.saldo, store=products)
+    return render_template("index.html", saldo=db_saldo.saldo, store=products)
 
 
 @app.route("/history/<index_start>/<index_stop>", methods=["GET", "POST"])
@@ -47,11 +48,11 @@ def main():
 def history(index_start=None, index_stop=None):
     logs = db.session.query(Logs).all()
     # manager.logs_read_file()
-    if not index_start:
-        index_start = 0
-    if not index_stop:
-        index_stop = len(manager.logs)
-    print(len(manager.logs))
+    # if not index_start:
+    #     index_start = 0
+    # if not index_stop:
+    #     index_stop = len(manager.logs)
+    # print(len(manager.logs))
     history = manager.logs[int(index_start): int(index_stop)]
 
     context = {
