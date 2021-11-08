@@ -41,14 +41,15 @@ def init_db(app):
         saldo = db.Column(db.Integer, nullable=False)
 
         @classmethod
-        def change_saldo(cls, change, log_line):
-            saldo = db.session.query(Saldo).first()
-            if not saldo:
-                saldo = Saldo(saldo=0)
-            if saldo.saldo + change < 0:
+        def change_saldo(cls, amount, log_line):
+            db_saldo = db.session.query(Saldo).first()
+            change = int(amount)
+            if not db_saldo:
+                db_saldo = Saldo(saldo=0)
+            if db_saldo.saldo + change < 0:
                 return False
-            saldo.saldo += change
-            db.session.add(saldo)
+            db_saldo.saldo += change
+            db.session.add(db_saldo)
             logs = Logs(log=log_line)
             db.session.add(logs)
             db.session.commit()

@@ -18,10 +18,10 @@ def main():
     params = []
 
     if mode == 'saldo':
-
         params.append(int(request.form.get('amount')))
         manager_execute(mode, params)
-        # Saldo.change_saldo(change=request.form.get('amount'), log_line='')
+        Saldo.change_saldo(amount=request.form.get('amount'), log_line='')
+
     elif mode == 'zakup':
         store = Store(product_name=request.form.get('name'), product_count=request.form.get('count'))
         db.session.add(store)
