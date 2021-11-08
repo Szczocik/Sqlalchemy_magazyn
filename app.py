@@ -17,24 +17,43 @@ def main():
     mode = request.form.get('mode')
     params = []
     if mode == 'saldo':
-        params.append(int(request.form.get('amount')))
-        manager_execute(mode, params)
-        Saldo.change_saldo(amount=request.form.get('amount'))
+        # params.append(int(request.form.get('amount')))
+        # manager_execute(mode, params)
+        amount = request.form.get('amount')
+        log = f"Zmiana saldo o: {amount}"
+        Saldo.change_saldo(amount=amount, log_line=log)
     elif mode == 'zakup':
-        store = Store(product_name=request.form.get('name'), product_count=request.form.get('count'))
-        db.session.add(store)
-        db.session.commit()
-        params.append(request.form.get('name'))
-        params.append(int(request.form.get('count')))
-        params.append(int(request.form.get('amount')))
-        manager_execute(mode, params)
+        product = request.form.get('name')
+        product_count = int(request.form.get('count'))
+        product_price = float(request.form.get('amount'))
+        amount = product_price * product_count
+        log = f'Dokonano zakupu produktu: {product} w ilości {product_count} sztuk, w cenie jednostkowej {product_price} zł.'
+        if Saldo.change_saldo(amount=amount, log_line=log):
+            store = db.session.query(Store).filter(product_name=product).first()
+            if not store:
+                store = Store(product_name=request.form.get('name'), product_count=0)
+
+            store.product_count += product_count
+            db.session.add(store)
+            db.session.add(log)
+            db.session.commit()
     elif mode == 'sprzedaz':
-        params.append(request.form.get('name'))
-        params.append(int(request.form.get('count')))
-        params.append(int(request.form.get('amount')))
-        manager_execute(mode, params)
+        product = request.form.get('name')
+        product_count = int(request.form.get('count'))
+        product_price = float(request.form.get('amount'))
+        log = f"Dokonano sprzedaży produktu: {product} w ilości {product_count} sztuk, o cenie jednostkowej {product_price} zł."
+        store = db.session.query(Store).filter(product_name=product).first()
+        if store:
+            store.product_count -= product_count
+            db.session.add(store)
+            db.session.add(log)
+            db.session.commit()
+
+
 
     db_saldo = db.session.query(Saldo).first()
+    if not db_saldo:
+        db_saldo = Saldo(saldo=0)
 
     products = {}
     db_products = db.session.query(Store).all()

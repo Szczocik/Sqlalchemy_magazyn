@@ -10,26 +10,6 @@ def init_db(app):
         product_name = db.Column(db.String(80), unique=True, nullable=False)
         product_count = db.Column(db.Float, nullable=False)
 
-        # @classmethod
-        # def change_purchese(cls, change, product_name, log_line):
-        #     store = db.session.query(Store).all()
-        #     if product_name in store:
-        #         store.product_count += change
-        #         db.session.add(store)
-        #         logs = Logs(log=log_line)
-        #         db.session.add(logs)
-        #         db.session.commit()
-        #     else:
-        #         db.session.add(store)
-        #         logs = Logs(log=log_line)
-        #         db.session.add(logs)
-        #         db.session.commit()
-        #
-        #
-        # @classmethod
-        # def change_sale(cls):
-        #     store = db.session.query(Store).all()
-        #     pass
 
     class Logs(db.Model):
         id = db.Column(db.Integer, primary_key=True)
@@ -41,7 +21,7 @@ def init_db(app):
         saldo = db.Column(db.Integer, nullable=False)
 
         @classmethod
-        def change_saldo(cls, amount):
+        def change_saldo(cls, amount, log_line):
             db_saldo = db.session.query(Saldo).first()
             change = int(amount)
             if not db_saldo:
@@ -50,8 +30,8 @@ def init_db(app):
                 return False
             db_saldo.saldo += change
             db.session.add(db_saldo)
-            # logs = Logs(log=log_line)
-            # db.session.add(logs)
+            logs = Logs(log=log_line)
+            db.session.add(logs)
             db.session.commit()
             return True
 
