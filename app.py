@@ -14,37 +14,50 @@ db = SQLAlchemy(app)
 
 @app.route("/", methods=["GET", "POST"])
 def main():
+    context = {
+        'error_saldo':'',
+        'error_zakup':'',
+        'error_sprzedaz':'',
+        'error_sprzedaz_magazyn':''
+    }
     mode = request.form.get('mode')
     if mode == 'saldo':
         amount = request.form.get('amount')
         log = f"Zmiana saldo o: {amount}"
-        Saldo.change_saldo(amount=amount, log_line=log)
+        if not Saldo.change_saldo(amount=amount, log_line=log):
+            context['error_saldo'] = 'Nie masz środków na koncie!'
     elif mode == 'zakup':
         product = request.form.get('name')
         product_count = int(request.form.get('count'))
         product_price = float(request.form.get('amount'))
         amount = product_price * product_count
         log = f'Dokonano zakupu produktu: {product} w ilości {product_count} sztuk, w cenie jednostkowej {product_price} zł.'
+        # if not Saldo.change_saldo(amount=amount, log_line=log):
+        #     context['error_zakup'] = f'Cena za towary ({amount}) przekracza wartość salda {Saldo.saldo}'
         if Saldo.change_saldo(amount=amount, log_line=log):
-            store = db.session.query(Store).filter(product_name=product).first()
+            store = db.session.query(Store).filter(Store.product_name==product).first()
             if not store:
                 store = Store(product_name=product, product_count=request.form.get('count'))
 
             store.product_count += product_count
             db.session.add(store)
-            db.session.add(log)
             db.session.commit()
     elif mode == 'sprzedaz':
         product = request.form.get('name')
         product_count = int(request.form.get('count'))
         product_price = float(request.form.get('amount'))
+        amount = product_price * product_count
         log = f"Dokonano sprzedaży produktu: {product} w ilości {product_count} sztuk, o cenie jednostkowej {product_price} zł."
-        store = db.session.query(Store).filter(product_name=product).first()
-        if store:
-            store.product_count -= product_count < 0
+        store = db.session.query(Store).filter(Store.product_name==product).first()
+        if store and store.product_count >= product_count:
+            Saldo.change_saldo(amount=amount, log_line=log)
+            store.product_count -= product_count
             db.session.add(store)
-            db.session.add(log)
             db.session.commit()
+        if not store:
+            context['error_sprzedaz_magazyn'] = 'Produktu nie ma w magazynie!'
+        if not store.product_count >= product_count:
+            context['error_sprzedaz'] = 'Brak wystarczającej ilości towaru!'
 
     db_saldo = db.session.query(Saldo).first()
     if not db_saldo:
@@ -54,7 +67,10 @@ def main():
     db_products = db.session.query(Store).all()
     for db_product in db_products:
         products[db_product.product_name] = {'count': db_product.product_count, 'price': 0}
-    return render_template("index.html", saldo=db_saldo.saldo, store=products)
+
+    context['saldo'] = db_saldo.saldo
+    context['store'] = products
+    return render_template("index.html", **context)
 
 
 @app.route("/history/<index_start>/<index_stop>", methods=["GET", "POST"])
@@ -67,6 +83,9 @@ def history(index_start=None, index_stop=None):
         index_stop = len(manager.logs)
     print(len(manager.logs))
     history = logs[int(index_start): int(index_stop)]
+
+    # session.query(MyTable.id).count()
+
 
     context = {
         "name": "Adam",

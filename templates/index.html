@@ -52,6 +52,9 @@
                 <input class="form-input" type="hidden" id="input-example-1" value="saldo" name="mode">
             </div>
             <div class="form-group">
+                {% if error_saldo %}
+                <div class="text-error">{{error_saldo}}</div>
+                {% endif %}
                 <label class="form-label" for="input-example-2"><span class="text-primary">Kwota</span></label>
                 <input class="form-input" type="number" id="input-example-2" placeholder="0" name="amount">
             </div>
@@ -64,6 +67,9 @@
             <div class="column col-6">
                 <form action="/" method="POST">
                     <div class="form-group">
+                        {% if error_zakup %}
+                            <div class="text-error">{{error_zakup}}</div>
+                        {% endif %}
                         <label class="form-label" for="input-example-1" style="background-color:MediumSeaGreen;">ZAKUP</label>
                         <input class="form-input" type="hidden" id="Zakup" value="zakup" name="mode">
                     </div>
