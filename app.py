@@ -15,10 +15,7 @@ db = SQLAlchemy(app)
 @app.route("/", methods=["GET", "POST"])
 def main():
     mode = request.form.get('mode')
-    params = []
     if mode == 'saldo':
-        # params.append(int(request.form.get('amount')))
-        # manager_execute(mode, params)
         amount = request.form.get('amount')
         log = f"Zmiana saldo o: {amount}"
         Saldo.change_saldo(amount=amount, log_line=log)
@@ -31,7 +28,7 @@ def main():
         if Saldo.change_saldo(amount=amount, log_line=log):
             store = db.session.query(Store).filter(product_name=product).first()
             if not store:
-                store = Store(product_name=request.form.get('name'), product_count=0)
+                store = Store(product_name=product, product_count=request.form.get('count'))
 
             store.product_count += product_count
             db.session.add(store)
@@ -44,12 +41,10 @@ def main():
         log = f"Dokonano sprzedaży produktu: {product} w ilości {product_count} sztuk, o cenie jednostkowej {product_price} zł."
         store = db.session.query(Store).filter(product_name=product).first()
         if store:
-            store.product_count -= product_count
+            store.product_count -= product_count < 0
             db.session.add(store)
             db.session.add(log)
             db.session.commit()
-
-
 
     db_saldo = db.session.query(Saldo).first()
     if not db_saldo:
@@ -66,13 +61,12 @@ def main():
 @app.route("/history")
 def history(index_start=None, index_stop=None):
     logs = db.session.query(Logs).all()
-    # manager.logs_read_file()
-    # if not index_start:
-    #     index_start = 0
-    # if not index_stop:
-    #     index_stop = len(manager.logs)
-    # print(len(manager.logs))
-    history = manager.logs[int(index_start): int(index_stop)]
+    if not index_start:
+        index_start = 0
+    if not index_stop:
+        index_stop = len(manager.logs)
+    print(len(manager.logs))
+    history = logs[int(index_start): int(index_stop)]
 
     context = {
         "name": "Adam",
