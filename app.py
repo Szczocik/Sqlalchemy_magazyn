@@ -34,7 +34,7 @@ def main():
         log = f'Dokonano zakupu produktu: {product} w ilości {product_count} sztuk, w cenie jednostkowej {product_price} zł.'
         # if not Saldo.change_saldo(amount=amount, log_line=log):
         #     context['error_zakup'] = f'Cena za towary ({amount}) przekracza wartość salda {Saldo.saldo}'
-        if Saldo.change_saldo(amount=amount, log_line=log):
+        if Saldo.change_saldo_purches(amount=amount, log_line=log):
             store = db.session.query(Store).filter(Store.product_name==product).first()
             if not store:
                 store = Store(product_name=product, product_count=request.form.get('count'))
