@@ -43,7 +43,7 @@ def init_db(app):
             change = int(amount)
             if not db_saldo:
                 db_saldo = Saldo(saldo=0)
-            if db_saldo.saldo + change < 0:
+            if db_saldo.saldo - change < 0:
                 return False
             db_saldo.saldo -= change
             db.session.add(db_saldo)
