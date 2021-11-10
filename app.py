@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 
-
 from accountant import manager
 from base import init_db
 
@@ -10,13 +9,12 @@ Store, Logs, Saldo = init_db(app)
 db = SQLAlchemy(app)
 
 
-
 @app.route("/", methods=["GET", "POST"])
 def main():
     context = {
         'error_saldo':'',
         'error_zakup':'',
-        'error_sprzedaz':'',
+        'error_sprzedaz':''
     }
     mode = request.form.get('mode')
     if mode == 'saldo':
@@ -56,8 +54,8 @@ def main():
             store.product_count -= product_count
             db.session.add(store)
             db.session.commit()
-
     db_saldo = db.session.query(Saldo).first()
+
     if not db_saldo:
         db_saldo = Saldo(saldo=0)
 
@@ -82,15 +80,10 @@ def history(index_start=None, index_stop=None):
     history = db.session.query(Logs).filter(Logs.id >= index_start).filter(Logs.id <= index_stop).all()
 
     context = {
-        "name": "Adam",
         "start": index_start,
         "stop": index_stop
     }
     return render_template("history.html", history=history, context=context)
-
-
-def manager_execute(mode, params):
-    manager.execute(mode, params)
 
 
 if __name__ == '__main__':
