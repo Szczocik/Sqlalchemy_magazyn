@@ -96,6 +96,12 @@
                         <input class="form-input" type="hidden" id="Sprzedaz" value="sprzedaz" name="mode">
                     </div>
                     <div class="form-group">
+                        {% if error_sprzedaz_towar %}
+                            <div class="text-error">{{error_sprzedaz_towar}}</div>
+                        {% endif %}
+                        {% if error_sprzedaz_ilosc %}
+                            <div class="text-error">{{error_sprzedaz_ilosc}}</div>
+                        {% endif %}
                         <label class="form-label" for="input-example-1"><span class="text-warning">Nazwa produktu</span></label>
                         <input class="form-input" type="text" id="sale_product_name" name="name">
                     </div>

@@ -17,15 +17,15 @@ def main():
     context = {
         'error_saldo':'',
         'error_zakup':'',
-        'error_sprzedaz':'',
-        'error_sprzedaz_magazyn':''
+        'error_sprzedaz_towar':'',
+        'error_sprzedaz_ilosc': ''
     }
     mode = request.form.get('mode')
     if mode == 'saldo':
         amount = request.form.get('amount')
         log = f"Zmiana saldo o: {amount}"
         if not Saldo.change_saldo(amount=amount, log_line=log):
-            context['error_saldo'] = 'Nie masz środków na koncie!'
+            context['error_saldo'] = 'Nie masz wystarczających środków na koncie!'
     elif mode == 'zakup':
         product = request.form.get('name')
         product_count = int(request.form.get('count'))
@@ -55,10 +55,10 @@ def main():
             store.product_count -= product_count
             db.session.add(store)
             db.session.commit()
-        if not store:
-            context['error_sprzedaz_magazyn'] = 'Produktu nie ma w magazynie!'
+        if not store.product_name == product:
+            context['error_sprzedaz_towar'] = 'Produktu nie ma w magazynie!'
         if not store.product_count >= product_count:
-            context['error_sprzedaz'] = 'Brak wystarczającej ilości towaru!'
+            context['error_sprzedaz_ilosc'] = 'Brak wystarczającej ilości towaru!'
 
     db_saldo = db.session.query(Saldo).first()
     if not db_saldo:
