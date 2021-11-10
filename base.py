@@ -1,8 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_alembic import Alembic
 
 
 def init_db(app):
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///baza_danych.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///baza_danych2.db'
     db = SQLAlchemy(app)
 
     class Store(db.Model):
@@ -10,13 +11,9 @@ def init_db(app):
         product_name = db.Column(db.String(80), unique=True, nullable=False)
         product_count = db.Column(db.Float, nullable=False)
 
-
-
-
     class Logs(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         log = db.Column(db.String(120), nullable=False)
-
 
     class Saldo(db.Model):
         id = db.Column(db.Integer, primary_key=True)
@@ -52,5 +49,7 @@ def init_db(app):
             db.session.commit()
             return True
 
-    db.create_all()
+    alembic = Alembic()
+    alembic.init_app(app)
+
     return Store, Logs, Saldo

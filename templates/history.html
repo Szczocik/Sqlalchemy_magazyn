@@ -32,9 +32,9 @@
                     </tr>
                   </thead>
                   <tbody>
-                  {% for index in history %}
+                  {% for row in history %}
                     <tr class="active">
-                        <td>{{ index }}</td>
+                        <td>{{ row.log }}</td>
                     </tr>
                   {% endfor %}
                    </tbody>
